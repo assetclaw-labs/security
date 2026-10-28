@@ -1,76 +1,76 @@
-Security Policy — AssetClaw Bot
+# AssetClaw Security Policy
 
-This policy covers the AssetClaw trading & wallet bot specifically (the Telegram
-bot and its wallet, trading, and monitoring backend). It does not cover other parts of
-the AssetClaw project such as the website or other services, which are maintained
-separately.
+This policy covers the AssetClaw project:
 
-AssetClaw is non-custodial. We take the security of user funds and data seriously.
-This document explains the bot's security practices at a high level and how to report
-a vulnerability responsibly.
+- **The website** at [assetclaw.xyz](https://assetclaw.xyz): the bridge (RWA Native, Privacy and Standard), claims, history and the Genesis 625 page.
+- **The AssetClaw backend** that prepares bridge quotes and claims and reports volume.
+- **The AssetClaw Telegram bot** ([@assetclawbot](https://t.me/assetclawbot)) and its wallet, trading and monitoring service.
 
-Reporting a Vulnerability
+The only official website is **assetclaw.xyz**. AssetClaw never sends the first direct message, and never asks for a seed phrase or private key.
 
-If you believe you have found a security vulnerability in the AssetClaw bot, please
-report it privately. Do not open a public issue.
+## Reporting a vulnerability
 
+Please report security issues privately. **Do not open a public issue.**
 
-Email: assetclawofficial@gmail.com
-Or contact an admin directly via our official channels (see assetclaw.xyz)
-
+- Email: assetclawofficial@gmail.com
+- Or contact an admin through the official channels listed on assetclaw.xyz
 
 Please include:
 
+- a description of the issue and its possible impact;
+- steps to reproduce, if possible;
+- any relevant addresses, transaction hashes or logs.
 
-A description of the issue and its potential impact
-Steps to reproduce, if possible
-Any relevant addresses, transaction hashes, or logs
+We aim to acknowledge reports promptly and will keep you updated on the fix. We credit reporters who wish to be acknowledged.
 
+## Your wallet and keys
 
-We aim to acknowledge reports within a reasonable time and will keep you updated on
-remediation. We appreciate responsible disclosure and will credit reporters who wish
-to be acknowledged.
+- **Website: non-custodial.** You connect your own wallet and sign every transaction yourself. AssetClaw never holds your keys or your funds.
+- **Telegram bot:** the bot creates a wallet for you. You can export the key at any time, protected by your export password, and use it in any standard wallet. You are never locked in.
 
-The Bot's Security Practices
+## Website and backend
 
-Wallet key protection. Private keys are encrypted at rest using authenticated
-encryption (AES-256-GCM) with per-user key derivation. Keys are decrypted only
-transiently in memory at the moment a transaction is signed, and are never stored or
-logged in plaintext.
+**Every transaction is checked before your wallet opens.** For RWA Native bridging and claims, the website keeps its own list of the official Asset Chain bridge contracts and the AssetClaw treasury. Each approval, deposit, fee and claim prepared by our backend must match that list:
 
-Non-custodial by design. Users can export their private key at any time (protected
-by a personal export password) to load their wallet into any standard Web3 wallet. You
-are never locked in.
+- the right bridge for the chain and token;
+- the funds going to your own wallet on the destination chain;
+- the fee going to the AssetClaw treasury, at no more than 1%.
 
-Secret handling. Application secrets (API keys, database credentials, the master
-encryption key) are held in environment configuration, never committed to source
-control, and never written to logs or error messages.
+If anything does not match, the website stops with a safety message and never asks your wallet to sign.
 
-Transaction safety. Swaps route only through a fixed, trusted on-chain router.
-Slippage is bounded to a small maximum, and minimum-output protection is enforced on
-every trade. Every transaction carries a short deadline to prevent stale execution.
+**Claims and statistics are verified on-chain.** A claim is reported to Asset Chain only after the backend confirms on-chain that it really happened. Bridge volume is only counted after the transaction is checked on-chain.
 
-Input validation. All user-supplied addresses and amounts are validated before use.
-Wallet operations are scoped to the requesting user's own account.
+**Browser protections.** The website cannot be loaded inside another site (protection against clickjacking), is served only over HTTPS, and sends standard security headers. A content security policy is being introduced in monitoring mode, so its rules are proven before they are enforced.
 
-Dependency hygiene. We monitor the bot's dependencies for known vulnerabilities and
-keep them patched.
+**Phishing protection.** Every page reminds visitors to check they are on assetclaw.xyz.
 
-Ongoing review. We conduct regular internal security reviews of the bot's codebase,
-covering wallet handling, transaction logic, access control, and its network endpoints.
+**Secrets.** API keys, database credentials and signing credentials stay on the server, in environment configuration. They are never committed to source control or sent to the browser, and error messages never include internal details.
 
-Scope and Limitations
+**Abuse limits.** Public endpoints are rate-limited per visitor, with tighter limits on those that use partner credentials. Admin endpoints require a key and are switched off when unset.
 
-This policy applies to the AssetClaw bot only. The bot interacts with third-party
-infrastructure (blockchain RPC providers, decentralized exchanges, price sources). We
-cannot guarantee the security or availability of external services or of third-party
-token contracts. Always do your own research before trading any token — a token's
-contract is written by its own creators and may behave maliciously regardless of our
-safeguards.
+**Dependencies.** Packages are locked to exact, verified versions, including the SilentSwap SDK that builds Privacy and Standard swaps. Updates are reviewed and tested before release.
 
-Nothing in this document is a warranty. Trading digital assets carries risk, including
-total loss.
+## Telegram bot
 
+**Wallet key protection.** Private keys are encrypted at rest with authenticated encryption (AES-256-GCM), using a separate derived key per user. Keys are decrypted only in memory, at the moment a transaction is signed, and are never stored or logged in plain text.
 
-This reflects the internal security practices of the AssetClaw bot and is not a
-substitute for a formal third-party audit.
+**Transaction safety.** Swaps go only through a fixed, trusted on-chain router. Slippage is capped (0.5%, 1% or 3%), every trade enforces a minimum output, and every transaction carries a short deadline so it cannot be executed late.
+
+**Input validation.** Addresses and amounts are validated before use, and wallet actions only ever apply to the requesting user's own account.
+
+**Secrets.** The master encryption key and other secrets live in environment configuration, never in source control or logs.
+
+## Third parties
+
+AssetClaw builds on infrastructure we do not control. We cannot guarantee their security or availability:
+
+- **Asset Chain:** the RWA Native bridge contracts and the bridge orchestrator that signs claims.
+- **SilentSwap:** routing for Privacy and Standard swaps. Approvals and in-transit funds follow SilentSwap's own design. SilentSwap has published security audits by [Halborn](https://www.halborn.com/audits/silentswap/v2---cps--gateway-3179a0), [Hacken](https://hacken.io/audits/silentswap/) and [CertiK](https://skynet.certik.com/projects/silent-swap).
+- **Wallets, blockchain RPC providers, decentralized exchanges and price sources.**
+- **Token contracts.** A token's contract is written by its own creators and may behave maliciously regardless of our safeguards. Always do your own research before trading a token.
+
+## Reviews
+
+We run regular internal security reviews of the website, backend and bot, covering transaction building and signing, wallet handling, access control, secrets and endpoints. The latest internal review was completed on 28 October 2026, and its findings were fixed or tracked before the Genesis 625 launch.
+
+This document describes our practices. It is not a warranty, and it is not a substitute for a formal third-party audit. Trading and bridging digital assets carries risk, including total loss.
