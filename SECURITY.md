@@ -2,11 +2,11 @@
 
 This policy covers the AssetClaw project:
 
-- **The website** at [assetclaw.xyz](https://assetclaw.xyz): the bridge (RWA Native, Privacy and Standard), claims, history and the Genesis 625 page.
+- **The website** at [assetclaw.xyz](https://assetclaw.xyz) (home and the Genesis 625 page) and the app at [app.assetclaw.xyz](https://app.assetclaw.xyz): the bridge (RWA Native, Privacy and Standard), claims and history.
 - **The AssetClaw backend** that prepares bridge quotes and claims and reports volume.
 - **The AssetClaw Telegram bot** ([@assetclawbot](https://t.me/assetclawbot)) and its wallet, trading and monitoring service.
 
-The only official website is **assetclaw.xyz**. AssetClaw never sends the first direct message, and never asks for a seed phrase or private key.
+The only official websites are **assetclaw.xyz** and **app.assetclaw.xyz**. AssetClaw never sends the first direct message, and never asks for a seed phrase or private key.
 
 ## Reporting a vulnerability
 
@@ -42,7 +42,7 @@ If anything does not match, the website stops with a safety message and never as
 
 **Browser protections.** The website cannot be loaded inside another site (protection against clickjacking), is served only over HTTPS, and sends standard security headers. A content security policy is being introduced in monitoring mode, so its rules are proven before they are enforced.
 
-**Phishing protection.** Every page reminds visitors to check they are on assetclaw.xyz.
+**Phishing protection.** Every page reminds visitors that the only official sites are assetclaw.xyz and app.assetclaw.xyz.
 
 **Secrets.** API keys, database credentials and signing credentials stay on the server, in environment configuration. They are never committed to source control or sent to the browser, and error messages never include internal details.
 
