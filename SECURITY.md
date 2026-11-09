@@ -2,11 +2,11 @@
 
 This policy covers the AssetClaw project:
 
-- **The website** at [assetclaw.xyz](https://assetclaw.xyz) (home and the Genesis 625 page) and the app at [app.assetclaw.xyz](https://app.assetclaw.xyz): the bridge (RWA Native, Privacy and Standard), claims and history.
+- **The website** at [assetclaw.xyz](https://assetclaw.xyz): the bridge (RWA Native, Privacy and Standard), claims, history and the Genesis 625 page.
 - **The AssetClaw backend** that prepares bridge quotes and claims and reports volume.
 - **The AssetClaw Telegram bot** ([@assetclawbot](https://t.me/assetclawbot)) and its wallet, trading and monitoring service.
 
-The only official websites are **assetclaw.xyz** and **app.assetclaw.xyz**. AssetClaw never sends the first direct message, and never asks for a seed phrase or private key.
+The only official website is **assetclaw.xyz**. AssetClaw never sends the first direct message, and never asks for a seed phrase or private key.
 
 ## Reporting a vulnerability
 
@@ -40,9 +40,9 @@ If anything does not match, the website stops with a safety message and never as
 
 **Claims and statistics are verified on-chain.** A claim is reported to Asset Chain only after the backend confirms on-chain that it really happened. Bridge volume is only counted after the transaction is checked on-chain.
 
-**Browser protections.** The website cannot be loaded inside another site (protection against clickjacking), is served only over HTTPS, and sends standard security headers. A content security policy is being introduced in monitoring mode, so its rules are proven before they are enforced.
+**Browser protections.** The website cannot be loaded inside another site (protection against clickjacking), is served only over HTTPS, and sends standard security headers. A strict content security policy is enforced: scripts may only load from assetclaw.xyz itself (plus Cloudflare's own analytics), so a compromised outside script host cannot inject code into the bridge.
 
-**Phishing protection.** Every page reminds visitors that the only official sites are assetclaw.xyz and app.assetclaw.xyz.
+**Phishing protection.** Every page reminds visitors to check they are on assetclaw.xyz.
 
 **Secrets.** API keys, database credentials and signing credentials stay on the server, in environment configuration. They are never committed to source control or sent to the browser, and error messages never include internal details.
 
@@ -57,6 +57,8 @@ If anything does not match, the website stops with a safety message and never as
 **Transaction safety.** Swaps go only through a fixed, trusted on-chain router. Slippage is capped (0.5%, 1% or 3%), every trade enforces a minimum output, and every transaction carries a short deadline so it cannot be executed late.
 
 **Input validation.** Addresses and amounts are validated before use, and wallet actions only ever apply to the requesting user's own account.
+
+**Untrusted token names.** Anyone can name a token anything. Token names and symbols are cleaned before the bot shows them (no markup, links or @mentions), so a malicious token cannot plant a fake link inside an AssetClaw message.
 
 **Secrets.** The master encryption key and other secrets live in environment configuration, never in source control or logs.
 
